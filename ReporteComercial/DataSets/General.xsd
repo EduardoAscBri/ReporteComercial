@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="General" targetNamespace="http://tempuri.org/General.xsd" xmlns:mstns="http://tempuri.org/General.xsd" xmlns="http://tempuri.org/General.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="General" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="General" msprop:Generator_UserDSName="General">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="ReporteVentas" msprop:Generator_TableClassName="ReporteVentasDataTable" msprop:Generator_TableVarName="tableReporteVentas" msprop:Generator_TablePropName="ReporteVentas" msprop:Generator_RowDeletingName="ReporteVentasRowDeleting" msprop:Generator_RowChangingName="ReporteVentasRowChanging" msprop:Generator_RowEvHandlerName="ReporteVentasRowChangeEventHandler" msprop:Generator_RowDeletedName="ReporteVentasRowDeleted" msprop:Generator_UserTableName="ReporteVentas" msprop:Generator_RowChangedName="ReporteVentasRowChanged" msprop:Generator_RowEvArgName="ReporteVentasRowChangeEvent" msprop:Generator_RowClassName="ReporteVentasRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CSERIEDOCUMENTO" msprop:Generator_ColumnVarNameInTable="columnCSERIEDOCUMENTO" msprop:Generator_ColumnPropNameInRow="CSERIEDOCUMENTO" msprop:Generator_ColumnPropNameInTable="CSERIEDOCUMENTOColumn" msprop:Generator_UserColumnName="CSERIEDOCUMENTO" type="xs:string" minOccurs="0" />
+              <xs:element name="CFOLIO" msprop:Generator_ColumnVarNameInTable="columnCFOLIO" msprop:Generator_ColumnPropNameInRow="CFOLIO" msprop:Generator_ColumnPropNameInTable="CFOLIOColumn" msprop:Generator_UserColumnName="CFOLIO" type="xs:int" minOccurs="0" />
+              <xs:element name="CFECHA" msprop:Generator_ColumnVarNameInTable="columnCFECHA" msprop:Generator_ColumnPropNameInRow="CFECHA" msprop:Generator_ColumnPropNameInTable="CFECHAColumn" msprop:Generator_UserColumnName="CFECHA" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="CCODIGOCLIENTE" msprop:Generator_ColumnVarNameInTable="columnCCODIGOCLIENTE" msprop:Generator_ColumnPropNameInRow="CCODIGOCLIENTE" msprop:Generator_ColumnPropNameInTable="CCODIGOCLIENTEColumn" msprop:Generator_UserColumnName="CCODIGOCLIENTE" type="xs:string" minOccurs="0" />
+              <xs:element name="CRAZONSOCIAL" msprop:Generator_ColumnVarNameInTable="columnCRAZONSOCIAL" msprop:Generator_ColumnPropNameInRow="CRAZONSOCIAL" msprop:Generator_ColumnPropNameInTable="CRAZONSOCIALColumn" msprop:Generator_UserColumnName="CRAZONSOCIAL" type="xs:string" minOccurs="0" />
+              <xs:element name="CRFC" msprop:Generator_ColumnVarNameInTable="columnCRFC" msprop:Generator_ColumnPropNameInRow="CRFC" msprop:Generator_ColumnPropNameInTable="CRFCColumn" msprop:Generator_UserColumnName="CRFC" type="xs:string" minOccurs="0" />
+              <xs:element name="CTEXTOEXTRA1" msprop:Generator_ColumnVarNameInTable="columnCTEXTOEXTRA1" msprop:Generator_ColumnPropNameInRow="CTEXTOEXTRA1" msprop:Generator_ColumnPropNameInTable="CTEXTOEXTRA1Column" msprop:Generator_UserColumnName="CTEXTOEXTRA1" type="xs:string" minOccurs="0" />
+              <xs:element name="CTEXTOEXTRA2" msprop:Generator_ColumnVarNameInTable="columnCTEXTOEXTRA2" msprop:Generator_ColumnPropNameInRow="CTEXTOEXTRA2" msprop:Generator_ColumnPropNameInTable="CTEXTOEXTRA2Column" msprop:Generator_UserColumnName="CTEXTOEXTRA2" type="xs:string" minOccurs="0" />
+              <xs:element name="CTEXTOEXTRA3" msprop:Generator_ColumnVarNameInTable="columnCTEXTOEXTRA3" msprop:Generator_ColumnPropNameInRow="CTEXTOEXTRA3" msprop:Generator_ColumnPropNameInTable="CTEXTOEXTRA3Column" msprop:Generator_UserColumnName="CTEXTOEXTRA3" type="xs:string" minOccurs="0" />
+              <xs:element name="CPAIS" msprop:Generator_ColumnVarNameInTable="columnCPAIS" msprop:Generator_ColumnPropNameInRow="CPAIS" msprop:Generator_ColumnPropNameInTable="CPAISColumn" msprop:Generator_UserColumnName="CPAIS" type="xs:string" minOccurs="0" />
+              <xs:element name="CESTADO" msprop:Generator_ColumnVarNameInTable="columnCESTADO" msprop:Generator_ColumnPropNameInRow="CESTADO" msprop:Generator_ColumnPropNameInTable="CESTADOColumn" msprop:Generator_UserColumnName="CESTADO" type="xs:string" minOccurs="0" />
+              <xs:element name="CCIUDAD" msprop:Generator_ColumnVarNameInTable="columnCCIUDAD" msprop:Generator_ColumnPropNameInRow="CCIUDAD" msprop:Generator_ColumnPropNameInTable="CCIUDADColumn" msprop:Generator_UserColumnName="CCIUDAD" type="xs:string" minOccurs="0" />
+              <xs:element name="CMUNICIPIO" msprop:Generator_ColumnVarNameInTable="columnCMUNICIPIO" msprop:Generator_ColumnPropNameInRow="CMUNICIPIO" msprop:Generator_ColumnPropNameInTable="CMUNICIPIOColumn" msprop:Generator_UserColumnName="CMUNICIPIO" type="xs:string" minOccurs="0" />
+              <xs:element name="CCODIGOPOSTAL" msprop:Generator_ColumnVarNameInTable="columnCCODIGOPOSTAL" msprop:Generator_ColumnPropNameInRow="CCODIGOPOSTAL" msprop:Generator_ColumnPropNameInTable="CCODIGOPOSTALColumn" msprop:Generator_UserColumnName="CCODIGOPOSTAL" type="xs:string" minOccurs="0" />
+              <xs:element name="CCOLONIA" msprop:Generator_ColumnVarNameInTable="columnCCOLONIA" msprop:Generator_ColumnPropNameInRow="CCOLONIA" msprop:Generator_ColumnPropNameInTable="CCOLONIAColumn" msprop:Generator_UserColumnName="CCOLONIA" type="xs:string" minOccurs="0" />
+              <xs:element name="CNUMEROINTERIOR" msprop:Generator_ColumnVarNameInTable="columnCNUMEROINTERIOR" msprop:Generator_ColumnPropNameInRow="CNUMEROINTERIOR" msprop:Generator_ColumnPropNameInTable="CNUMEROINTERIORColumn" msprop:Generator_UserColumnName="CNUMEROINTERIOR" type="xs:string" minOccurs="0" />
+              <xs:element name="CNUMEROEXTERIOR" msprop:Generator_ColumnVarNameInTable="columnCNUMEROEXTERIOR" msprop:Generator_ColumnPropNameInRow="CNUMEROEXTERIOR" msprop:Generator_ColumnPropNameInTable="CNUMEROEXTERIORColumn" msprop:Generator_UserColumnName="CNUMEROEXTERIOR" type="xs:string" minOccurs="0" />
+              <xs:element name="CNOMBRECALLE" msprop:Generator_ColumnVarNameInTable="columnCNOMBRECALLE" msprop:Generator_ColumnPropNameInRow="CNOMBRECALLE" msprop:Generator_ColumnPropNameInTable="CNOMBRECALLEColumn" msprop:Generator_UserColumnName="CNOMBRECALLE" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
