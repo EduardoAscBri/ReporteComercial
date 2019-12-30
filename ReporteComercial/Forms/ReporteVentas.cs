@@ -44,11 +44,7 @@ namespace ReporteComercial.Forms
             lFechaInicial = this.dtpFechaInicial.Text;
             lFechaFinal = this.dtpFechaFinal.Text;
 
-            //lFechaInicial = "01/10/2019";
-            //lFechaFinal = "30/10/2019";
-
             reporte(lFechaInicial, lFechaFinal);
-
         }
 
         public void reporte(string fechaInicial, string fechaFinal)
@@ -138,7 +134,7 @@ namespace ReporteComercial.Forms
                 "ON admProductos.CIDVALORCLASIFICACION4 = admClasificacionesValores_4.CIDVALORCLASIFICACION " +
                 "LEFT JOIN admClasificacionesValores AS admClasificacionesValores_5 " +
                 "ON admProductos.CIDVALORCLASIFICACION5 = admClasificacionesValores_5.CIDVALORCLASIFICACION " +
-                "WHERE(admDocumentos.CIDDOCUMENTODE = 4) AND (admDocumentos.CIDDOCUMENTO = @cidfactura) AND (admDomicilios.CTIPOCATALOGO = 1) AND(admDomicilios.CTIPODIRECCION = 0) " +
+                "WHERE(admDocumentos.CIDDOCUMENTODE = 4 AND admDocumentos.CCANCELADO = 0) AND (admDocumentos.CIDDOCUMENTO = @cidfactura) AND (admDomicilios.CTIPOCATALOGO = 1) AND(admDomicilios.CTIPODIRECCION = 0) " +
                 "ORDER BY admDocumentos.CFOLIO ASC";
 
             string cmdCargosAbonos = "SELECT        admAsocCargosAbonos.CIDDOCUMENTOABONO, admAsocCargosAbonos.CIDDOCUMENTOCARGO, " +
@@ -147,7 +143,7 @@ namespace ReporteComercial.Forms
                 "FROM admAsocCargosAbonos " +
                 "LEFT JOIN admDocumentos " +
                 "ON admAsocCargosAbonos.CIDDOCUMENTOABONO = admDocumentos.CIDDOCUMENTO " +
-                "WHERE(admDocumentos.CIDDOCUMENTODE = 9) AND (admAsocCargosAbonos.CIDDOCUMENTOCARGO = @cidfactura) AND (admDocumentos.CFECHA BETWEEN @fechaInicial AND @fechaFinal)";
+                "WHERE(admDocumentos.CIDDOCUMENTODE = 9) AND (admAsocCargosAbonos.CIDDOCUMENTOCARGO = @cidfactura) AND (admDocumentos.CFECHA BETWEEN @fechaInicial AND @fechaFinal) AND (admDocumentos.CCANCELADO = 0)";
 
             SqlCommand command = new SqlCommand();
             command = new SqlCommand(cmdFacturas, this.conexion);
@@ -186,6 +182,7 @@ namespace ReporteComercial.Forms
 
                 int movimientos = detalleFactura.Rows.Count;
                 int pagos = detallePago.Rows.Count;
+
                 string seriePago = "";
                 int folioPago = 0;
                 DateTime fechaPago = DateTime.Now;
@@ -197,7 +194,6 @@ namespace ReporteComercial.Forms
                     seriePago = rowPago["CSERIEDOCUMENTO"].ToString();
                     folioPago = Convert.ToInt32(rowPago["CFOLIO"]);
                     fechaPago = Convert.ToDateTime(rowPago["CFECHA"]);
-                    
                 }
                 else if (pagos > 1)
                 {
@@ -209,6 +205,7 @@ namespace ReporteComercial.Forms
 
                 double totalFactura = 0;
                 double totalPago = 0;
+                double importePagado = 0;
 
                 //Resume el total de la factura segun los movimientos
                 foreach (DataRow rowDetalle in detalleFactura.Rows)
@@ -223,10 +220,36 @@ namespace ReporteComercial.Forms
                 //Provateo y llenado de la tabla Reporte
                 foreach(DataRow rowDetalle in detalleFactura.Rows)
                 {
+                    /*
+                    if (rowDetalle["CCODIGOCLIENTE"].ToString() == "CLI1421")
+                    {
+                        MessageBox.Show(totalPago.ToString());
+                    }
                     double totalMovimiento = Convert.ToDouble(rowDetalle["CTOTAL"]);
                     double porcentajePago = (totalMovimiento * 100) / totalPago;
                     porcentajePago = (porcentajePago / 100);
-                    double importePagado = (totalPago * porcentajePago);
+                    importePagado = (totalPago * porcentajePago);
+                    totalPago = totalPago - importePagado;
+                    
+                    if (rowDetalle["CCODIGOCLIENTE"].ToString() == "CLI1421")
+                    {
+                        MessageBox.Show(totalPago.ToString());
+                        MessageBox.Show(totalMovimiento.ToString());
+                    }
+                    */
+
+                    double totalMovimiento = Convert.ToDouble(rowDetalle["CTOTAL"]);
+                    if (totalPago >= totalMovimiento)
+                    {
+                        importePagado = totalMovimiento;
+                        totalPago = totalPago - importePagado;
+                    }
+                    else
+                    {
+                        importePagado = totalPago;
+                        totalPago = totalPago - importePagado;
+                    }
+
 
                     DataRow dataRow = reporte.NewRow();
 
@@ -274,7 +297,6 @@ namespace ReporteComercial.Forms
                     dataRow["IMPORTEPAGADO"] = importePagado;
 
                     reporte.Rows.Add(dataRow);
-
                 }
             }
 
@@ -284,6 +306,7 @@ namespace ReporteComercial.Forms
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Hoja de calculo Excel (*.xlsx)|*.xlsx";
+
             if(saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 workBook.SaveAs(saveFileDialog.FileName);
@@ -293,7 +316,6 @@ namespace ReporteComercial.Forms
             {
                 MessageBox.Show("Error generando el reporte");
             }
-
         }
     }
 }
