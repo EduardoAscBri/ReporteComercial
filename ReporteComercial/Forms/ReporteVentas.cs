@@ -21,14 +21,37 @@ namespace ReporteComercial.Forms
         public ReporteVentas()
         {
             InitializeComponent();
+            ConectaBaseDatos();
+            CargarDocumentosModelo();
         }
 
-        private void ReporteVentas_Load(object sender, EventArgs e)
+        public void ConectaBaseDatos()
         {
             this.rutaLocal = Application.StartupPath;
             InnerDatabaseManager databaseManager = new InnerDatabaseManager();
             this.conexion = databaseManager.createConnectionFromIniFile(this.rutaLocal);
+            //this.conexion.Open();
         }
+
+        public void CargarDocumentosModelo()
+        {
+            SqlCommand comandoModelo = new SqlCommand("SELECT admDocumentosModelo.CIDDOCUMENTODE, admDocumentosModelo.CDESCRIPCION FROM admDocumentosModelo", this.conexion);
+            comandoModelo.CommandType = CommandType.Text;
+            SqlDataAdapter dataAdapterModelo = new SqlDataAdapter(comandoModelo);
+            DataTable tablaCargo = new DataTable();
+            DataTable tablaAbono = new DataTable();
+            dataAdapterModelo.Fill(tablaCargo);
+            dataAdapterModelo.Fill(tablaAbono);
+
+            this.cmbDoctoCargo.DataSource = tablaCargo;
+            this.cmbDoctoCargo.DisplayMember = "CDESCRIPCION";
+            this.cmbDoctoCargo.ValueMember = "CIDDOCUMENTODE";
+
+            this.cmbDoctoAbono.DataSource = tablaAbono;
+            this.cmbDoctoAbono.DisplayMember = "CDESCRIPCION";
+            this.cmbDoctoAbono.ValueMember = "CIDDOCUMENTODE";
+        }
+
 
         private void bttSalir_Click(object sender, EventArgs e)
         {
@@ -41,13 +64,19 @@ namespace ReporteComercial.Forms
             string lFechaInicial = "";
             string lFechaFinal = "";
 
+            int lDoctoCargo = 0;
+            int lDoctoAbono = 0;
+
             lFechaInicial = this.dtpFechaInicial.Text;
             lFechaFinal = this.dtpFechaFinal.Text;
 
-            reporte(lFechaInicial, lFechaFinal);
+            lDoctoCargo = Convert.ToInt32(this.cmbDoctoCargo.SelectedValue);
+            lDoctoAbono = Convert.ToInt32(this.cmbDoctoAbono.SelectedValue);
+
+            reporte(lDoctoCargo, lDoctoAbono, lFechaInicial, lFechaFinal);
         }
 
-        public void reporte(string fechaInicial, string fechaFinal)
+        public void reporte(int doctoCargo, int doctoAbono, string fechaInicial, string fechaFinal)
         {
             DataTable reporte = new DataTable();
             reporte.Columns.Add("CSERIEDOCUMENTO");
@@ -86,6 +115,7 @@ namespace ReporteComercial.Forms
             reporte.Columns.Add("CDESCUENTO1");
             reporte.Columns.Add("CDESCUENTO2");
             reporte.Columns.Add("CTOTAL");
+            reporte.Columns.Add("CCOSTOESPECIFICO");
             reporte.Columns.Add("CREFERENCIA");
             reporte.Columns.Add("COBSERVAMOV");
             reporte.Columns.Add("SERIEPAGO");
@@ -93,10 +123,12 @@ namespace ReporteComercial.Forms
             reporte.Columns.Add("FECHAPAGO");
             reporte.Columns.Add("IMPORTEPAGADO");
 
+            //Se modifica el CIDDOCUMENTODE, de (4 facturas) a (19 compras)
             string cmdFacturas = "SELECT CIDDOCUMENTO, CSERIEDOCUMENTO, CFOLIO, CFECHA " +
                 "FROM admDocumentos " +
-                "WHERE(admDocumentos.CIDDOCUMENTODE = 4) " +
+                "WHERE(admDocumentos.CIDDOCUMENTODE = @doctoCargo) " +
                 "AND (admDocumentos.CFECHA BETWEEN @fechaInicial AND @fechaFinal)";
+
 
             string cmdFacturaDetalle = "SELECT        admDocumentos.CSERIEDOCUMENTO, admDocumentos.CFOLIO, admDocumentos.CFECHA, " +
                 "admClientes.CCODIGOCLIENTE, admClientes.CRAZONSOCIAL, admClientes.CRFC, " +
@@ -111,7 +143,7 @@ namespace ReporteComercial.Forms
                 "admClasificacionesValores_5.CVALORCLASIFICACION AS TIPO, " +
                 "admMovimientos.CNUMEROMOVIMIENTO, admMovimientos.CUNIDADES, admMovimientos.CPRECIO, admMovimientos.CNETO, " +
                 "admMovimientos.CDESCUENTO1, admMovimientos.CDESCUENTO2, " +
-                "admMovimientos.CTOTAL, " +
+                "admMovimientos.CTOTAL, admMovimientos.CCOSTOESPECIFICO, " +
                 "admMovimientos.CREFERENCIA, admMovimientos.COBSERVAMOV " +
                 "FROM admDocumentos " +
                 "LEFT JOIN admClientes " +
@@ -134,22 +166,24 @@ namespace ReporteComercial.Forms
                 "ON admProductos.CIDVALORCLASIFICACION4 = admClasificacionesValores_4.CIDVALORCLASIFICACION " +
                 "LEFT JOIN admClasificacionesValores AS admClasificacionesValores_5 " +
                 "ON admProductos.CIDVALORCLASIFICACION5 = admClasificacionesValores_5.CIDVALORCLASIFICACION " +
-                "WHERE(admDocumentos.CIDDOCUMENTODE = 4 AND admDocumentos.CCANCELADO = 0) AND (admDocumentos.CIDDOCUMENTO = @cidfactura) AND (admDomicilios.CTIPOCATALOGO = 1) AND(admDomicilios.CTIPODIRECCION = 0) " +
+                "WHERE(admDocumentos.CIDDOCUMENTODE = @doctoCargo AND admDocumentos.CCANCELADO = 0) AND (admDocumentos.CIDDOCUMENTO = @cidfactura) AND (admDomicilios.CTIPOCATALOGO = 1) AND(admDomicilios.CTIPODIRECCION = 0) " +
                 "ORDER BY admDocumentos.CFOLIO ASC";
 
+            //Se cambio el CIDDOCUMENTODE de (9 pago del ciente) a (26 abono a proveedor)
             string cmdCargosAbonos = "SELECT        admAsocCargosAbonos.CIDDOCUMENTOABONO, admAsocCargosAbonos.CIDDOCUMENTOCARGO, " +
                 "admAsocCargosAbonos.CIMPORTEABONO, admAsocCargosAbonos.CIMPORTECARGO, " +
                 "admDocumentos.CSERIEDOCUMENTO, admDocumentos.CFOLIO, admDocumentos.CFECHA, admDocumentos.CTOTAL " +
                 "FROM admAsocCargosAbonos " +
                 "LEFT JOIN admDocumentos " +
                 "ON admAsocCargosAbonos.CIDDOCUMENTOABONO = admDocumentos.CIDDOCUMENTO " +
-                "WHERE(admDocumentos.CIDDOCUMENTODE = 9) AND (admAsocCargosAbonos.CIDDOCUMENTOCARGO = @cidfactura) AND (admDocumentos.CFECHA BETWEEN @fechaInicial AND @fechaFinal) AND (admDocumentos.CCANCELADO = 0)";
+                "WHERE(admDocumentos.CIDDOCUMENTODE = @doctoAbono) AND (admAsocCargosAbonos.CIDDOCUMENTOCARGO = @cidfactura) AND (admDocumentos.CFECHA BETWEEN @fechaInicial AND @fechaFinal) AND (admDocumentos.CCANCELADO = 0)";
 
             SqlCommand command = new SqlCommand();
             command = new SqlCommand(cmdFacturas, this.conexion);
-            
+
             command.Parameters.AddWithValue("@fechaInicial", fechaInicial);
             command.Parameters.AddWithValue("@fechaFinal", fechaFinal);
+            command.Parameters.AddWithValue("@doctoCargo", doctoCargo);
             
             SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
             DataTable listaFacturas = new DataTable();
@@ -158,7 +192,6 @@ namespace ReporteComercial.Forms
             DataTable detalleFactura = new DataTable();
             DataTable detallePago = new DataTable();
 
-            
 
             foreach(DataRow row in listaFacturas.Rows)
             {
@@ -168,6 +201,7 @@ namespace ReporteComercial.Forms
                 detalleFactura.Clear();
                 command = new SqlCommand(cmdFacturaDetalle, this.conexion);
                 command.Parameters.AddWithValue("@cidfactura", cidfactura);
+                command.Parameters.AddWithValue("@doctoCargo", doctoCargo);
                 dataAdapter = new SqlDataAdapter(command);
                 dataAdapter.Fill(detalleFactura);
 
@@ -177,6 +211,7 @@ namespace ReporteComercial.Forms
                 command.Parameters.AddWithValue("@cidfactura", cidfactura);
                 command.Parameters.AddWithValue("@fechaInicial", fechaInicial);
                 command.Parameters.AddWithValue("@fechaFinal", fechaFinal);
+                command.Parameters.AddWithValue("@doctoAbono", doctoAbono);
                 dataAdapter = new SqlDataAdapter(command);
                 dataAdapter.Fill(detallePago);
 
@@ -197,9 +232,12 @@ namespace ReporteComercial.Forms
                 }
                 else if (pagos > 1)
                 {
+                    DataRow rowPago = detallePago.Rows[(pagos-1)];
                     seriePago = "VARIOS";
-                    folioPago = 0;
-                    fechaPago = DateTime.Now;
+                    //folioPago = 0;
+                    folioPago = Convert.ToInt32(rowPago["CFOLIO"]);
+                    //fechaPago = DateTime.Now;
+                    fechaPago = Convert.ToDateTime(rowPago["CFECHA"]);
                 }
 
 
@@ -210,7 +248,7 @@ namespace ReporteComercial.Forms
                 //Resume el total de la factura segun los movimientos
                 foreach (DataRow rowDetalle in detalleFactura.Rows)
                 {
-                    totalFactura = totalFactura + Convert.ToDouble(rowDetalle["CTOTAL"]);
+                    totalFactura = totalFactura + Convert.ToDouble(rowDetalle["CTOTAL"] is DBNull ? 0 : rowDetalle["CTOTAL"]);
                 }
                 //Resume el total pagado segun los abonos aplicados
                 foreach(DataRow rowDetalle in detallePago.Rows)
@@ -238,7 +276,7 @@ namespace ReporteComercial.Forms
                     }
                     */
 
-                    double totalMovimiento = Convert.ToDouble(rowDetalle["CTOTAL"]);
+                    double totalMovimiento = Convert.ToDouble(rowDetalle["CTOTAL"] is DBNull ? 0 : rowDetalle["CTOTAL"]);
                     if (totalPago >= totalMovimiento)
                     {
                         importePagado = totalMovimiento;
@@ -289,6 +327,7 @@ namespace ReporteComercial.Forms
                     dataRow["CDESCUENTO1"] = rowDetalle["CDESCUENTO1"];
                     dataRow["CDESCUENTO2"] = rowDetalle["CDESCUENTO2"];
                     dataRow["CTOTAL"] = rowDetalle["CTOTAL"];
+                    dataRow["CCOSTOESPECIFICO"] = rowDetalle["CCOSTOESPECIFICO"];
                     dataRow["CREFERENCIA"] = rowDetalle["CREFERENCIA"];
                     dataRow["COBSERVAMOV"] = rowDetalle["COBSERVAMOV"];
                     dataRow["SERIEPAGO"] = seriePago;
